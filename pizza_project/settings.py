@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-3=yjjwd3zrk1!g6pep!9b2ar3+q%7rr_(=80s6b71!abksom4^
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'pizza-09abzx79qyed2.cpln.app',
+    '*',
 ]
 
 
