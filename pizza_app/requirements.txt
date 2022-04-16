@@ -1,0 +1,7 @@
+requests
+pyhamcrest
+xmltodict
+pytest
+mock
+djangorestframework
+django-cors-headers
