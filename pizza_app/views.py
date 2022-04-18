@@ -37,24 +37,28 @@ from pizzapy.menu import Menu
 # "items": [{"code": "12HTTSIXCH", "qty": 1}],
 # }
 
+
 class PizzaLocations(APIView):
     def post(self, request):
         body = request.data
 
-        location = body["address"] + ", " + body["city"] + ", " + body["region"] + ", " + body["code"]
-    
+        location = body["address"] + ", " + body["city"] + \
+            ", " + body["region"] + ", " + body["code"]
+
         customer = Customer("", "", "", "", location)
-        my_local_dominos = StoreLocator.find_closest_store_to_customer(customer)
+        my_local_dominos = StoreLocator.find_closest_store_to_customer(
+            customer)
         menu = my_local_dominos.get_menu()
         menu.search()
         return Response({
             'location': my_local_dominos.data
         })
 
+
 class PizzaStoreMenu(APIView):
     def get(self, request, store_id):
         menu = Menu.from_store(store_id, country="ca")
-        
+
         return Response({
             'menu': menu.variants.values()
         })
@@ -64,11 +68,14 @@ class PizzaPlaceOrder(APIView):
     def post(self, request):
         body = request.data
 
-        location = body["address"] + ", " + body["city"] + ", " + body["region"] + ", " + body["code"]
+        location = body["address"] + ", " + body["city"] + \
+            ", " + body["region"] + ", " + body["code"]
 
-        customer = Customer(body["firstName"], body["lastName"], body["email"], body["phone"], location)
+        customer = Customer(
+            body["firstName"], body["lastName"], body["email"], body["phone"], location)
 
-        my_local_dominos = StoreLocator.find_closest_store_to_customer(customer)
+        my_local_dominos = StoreLocator.find_closest_store_to_customer(
+            customer)
 
         total_price = 0
         for item in body["items"]:
@@ -83,12 +90,11 @@ class PizzaPlaceOrder(APIView):
             for item in menu.variants.values():
                 if(float(item["Price"]) < total_price):
                     items_within_price.append(item)
-            
+
             random_item = random.choice(items_within_price)
             random_items.append(random_item)
             items_within_price = []
             total_price = total_price - float(random_item["Price"])
-            
 
         for item in random_items:
             print("random", item["Name"], item["Price"])
@@ -100,7 +106,8 @@ class PizzaPlaceOrder(APIView):
             order.add_item(item["Code"], item["quantity"])
 
         try:
-            card = CreditCard(body['cardNumber'], body['cardExpiry'], body['csv'], body['code'])
+            card = CreditCard(
+                body['cardNumber'], body['cardExpiry'], body['csv'], body['code'])
         except Exception as e:
             return Response({
                 'error': e
@@ -112,7 +119,6 @@ class PizzaPlaceOrder(APIView):
         return Response({
             'order': order.data
         })
-
 
 
 # {
